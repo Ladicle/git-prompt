@@ -1,0 +1,7 @@
+# VSCODE
+*.sock
+User
+debug.test
+
+# binary
+gitstatus
