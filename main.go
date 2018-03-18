@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/fatih/color"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -33,25 +32,25 @@ type Git struct {
 }
 
 func (g *Git) Print() {
-	var icon string
+	var icon int
 	if g.ConflictNum != 0 {
-		icon = color.YellowString("")
+		icon = 0
 	} else if g.BehindNum != 0 {
-		icon = color.RedString("")
+		icon = 1
 	} else if g.AheadNum != 0 {
-		icon = color.RedString("")
+		icon = 2
 	} else {
-		icon = color.MagentaString("")
+		icon = 3
 	}
 
 	var status string
 	if g.StagedNum != 0 || g.ChangedNum != 0 || g.UntrackedNum != 0 {
-		status = fmt.Sprintf(" | %s %d,%d,%d", color.YellowString(""), g.StagedNum, g.ChangedNum, g.UntrackedNum)
+		status = fmt.Sprintf(" %d,%d,%d", g.StagedNum, g.ChangedNum, g.UntrackedNum)
 	} else {
-		icon = color.GreenString("")
+		icon = 4
 	}
 
-	fmt.Printf("%s %s%s", icon, g.Branch, status)
+	fmt.Printf("%d %s%s", icon, g.Branch, status)
 }
 
 // UpdateRemoteStatus is function to update status of remote repository changes
