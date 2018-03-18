@@ -3,6 +3,8 @@
 Show git status for my fish prompt!
 (required Nard-Font)
 
+![screenshot](screenshot.png)
+
 ## Status
 
 non git repository
