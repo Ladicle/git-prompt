@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/fatih/color"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -31,16 +32,26 @@ type Git struct {
 	ConflictNum  int
 }
 
-func (g *Git) String() string {
-	return fmt.Sprintf("%s | ☀︎ %d, ☁︎ %d, ☂ %d, ⚡︎%d, ↓%d, ↑%d",
-		g.Branch,
-		g.StagedNum,
-		g.ChangedNum,
-		g.UntrackedNum,
-		g.ConflictNum,
-		g.BehindNum,
-		g.AheadNum,
-	)
+func (g *Git) Print() {
+	var icon string
+	if g.ConflictNum != 0 {
+		icon = color.YellowString("")
+	} else if g.BehindNum != 0 {
+		icon = color.RedString("")
+	} else if g.AheadNum != 0 {
+		icon = color.RedString("")
+	} else {
+		icon = color.MagentaString("")
+	}
+
+	var status string
+	if g.StagedNum != 0 || g.ChangedNum != 0 || g.UntrackedNum != 0 {
+		status = fmt.Sprintf(" | %s %d,%d,%d", color.YellowString(""), g.StagedNum, g.ChangedNum, g.UntrackedNum)
+	} else {
+		icon = color.GreenString("")
+	}
+
+	fmt.Printf("%s %s%s", icon, g.Branch, status)
 }
 
 // UpdateRemoteStatus is function to update status of remote repository changes
@@ -121,8 +132,7 @@ func (g *Git) UpdateBranchName() error {
 func main() {
 	git, err := NewCurrentDirGit()
 	if err != nil {
-		fmt.Println(err)
 		os.Exit(0)
 	}
-	fmt.Println(git.String())
+	git.Print()
 }
