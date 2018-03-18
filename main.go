@@ -119,12 +119,12 @@ func (g *Git) UpdateLocalStatus() error {
 }
 
 func (g *Git) UpdateBranchName() error {
-	branch, err := exec.Command("git", "symbolic-ref", "HEAD").Output()
+	branch, err := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD").Output()
 	if err != nil {
 		// TODO(ladicle): implement function to get hash value
 		return err
 	}
-	g.Branch = strings.TrimSpace(string(branch)[11:])
+	g.Branch = strings.TrimSpace(string(branch))
 	return nil
 }
 
