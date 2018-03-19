@@ -13,7 +13,6 @@ func NewCurrentDirGit() (Git, error) {
 	eg := errgroup.Group{}
 	git := Git{}
 
-	eg.Go(func() error { return git.UpdateBranchName() })
 	eg.Go(func() error { return git.UpdateLocalStatus() })
 	eg.Go(func() error { return git.UpdateRemoteStatus() })
 
@@ -55,32 +54,24 @@ func (g *Git) Print() {
 
 // UpdateRemoteStatus is function to update status of remote repository changes
 func (g *Git) UpdateRemoteStatus() error {
-	r, err := exec.Command("git", "config", fmt.Sprintf("branch.%s.remote", g.Branch)).Output()
-	if err != nil {
-		return nil
-	}
-
-	m, err := exec.Command("git", "config", fmt.Sprintf("branch.%s.merge", g.Branch)).Output()
+	branch, err := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD").Output()
 	if err != nil {
 		return err
 	}
+	g.Branch = strings.TrimSpace(string(branch))
 
-	var ref string
-	if string(r) == "." {
-		ref = string(m)
-	} else {
-		ref = fmt.Sprintf("refs/remotes/%s/%s", string(r), string(m)[11:])
-	}
-
-	revgit, err := exec.Command(
-		"git", "rev-list", "--left-right", fmt.Sprintf("%s...HEAD", ref)).Output()
+	ref := fmt.Sprintf("origin/%s...%s", g.Branch, g.Branch)
+	revgit, err := exec.Command("git", "rev-list", "--left-right", ref).Output()
 	if err != nil {
 		return err
 	}
 
 	difflines := strings.Split(string(revgit), "\n")
 	for _, r := range difflines {
-		if r[0] == '>' {
+		if strings.TrimSpace(r) == "" {
+			continue
+		}
+		if strings.HasPrefix(r, "<") {
 			g.BehindNum++
 		} else {
 			g.AheadNum++
@@ -115,16 +106,6 @@ func (g *Git) UpdateLocalStatus() error {
 			g.ConflictNum++
 		}
 	}
-	return nil
-}
-
-func (g *Git) UpdateBranchName() error {
-	branch, err := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD").Output()
-	if err != nil {
-		// TODO(ladicle): implement function to get hash value
-		return err
-	}
-	g.Branch = strings.TrimSpace(string(branch))
 	return nil
 }
 
