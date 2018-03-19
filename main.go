@@ -45,7 +45,7 @@ func (g *Git) Print() {
 	var status string
 	if g.StagedNum != 0 || g.ChangedNum != 0 || g.UntrackedNum != 0 {
 		status = fmt.Sprintf(" %d,%d,%d", g.StagedNum, g.ChangedNum, g.UntrackedNum)
-	} else {
+	} else if icon == 3 {
 		icon = 4
 	}
 
