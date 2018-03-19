@@ -28,6 +28,7 @@ type Git struct {
 	AheadNum     int // The number of ahead changes
 	BehindNum    int // The number of behind changes
 	ConflictNum  int
+	NoRemote     bool
 }
 
 func (g *Git) Print() {
@@ -36,7 +37,7 @@ func (g *Git) Print() {
 		icon = 0
 	} else if g.BehindNum != 0 {
 		icon = 1
-	} else if g.AheadNum != 0 {
+	} else if g.AheadNum != 0 || g.NoRemote {
 		icon = 2
 	} else {
 		icon = 3
@@ -63,7 +64,8 @@ func (g *Git) UpdateRemoteStatus() error {
 	ref := fmt.Sprintf("origin/%s...%s", g.Branch, g.Branch)
 	revgit, err := exec.Command("git", "rev-list", "--left-right", ref).Output()
 	if err != nil {
-		return err
+		g.NoRemote = true
+		return nil
 	}
 
 	difflines := strings.Split(string(revgit), "\n")
