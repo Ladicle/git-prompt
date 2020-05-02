@@ -1,9 +1,2 @@
-# VSCODE
-*.sock
-User
-debug.test
-
-# binary
-gitstatus
-
 vendor
+_output
