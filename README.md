@@ -5,6 +5,20 @@ Show git status for my fish prompt!
 
 ![screenshot](screenshot.png)
 
+## Installation
+
+Homebrew:
+
+```console
+brew install Ladicle/tap/git-prompt
+```
+
+Go:
+
+```console
+go install github.com/Ladicle/git-prompt@latest
+```
+
 ## Sample prompt for fish
 
 See [sample.fish](sample.fish).
@@ -14,13 +28,13 @@ See [sample.fish](sample.fish).
 non git repository
 
 ```
- 
+
 ```
 
 all clean 
 
 ```
- branch 
+ branch
 ```
 
 conflicted!

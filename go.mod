@@ -1,5 +1,5 @@
 module github.com/Ladicle/git-prompt
 
-go 1.17
+go 1.23.3
 
-require golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
+require golang.org/x/sync v0.9.0
